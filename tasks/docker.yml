@@ -1,0 +1,35 @@
+- name: Install misc admin packages
+  become: yes
+  apt: name="{{ item }}" state=present update_cache=yes
+  with_items:
+      - docker.io
+
+- name: Remove docker-compose from package manager
+  become: yes
+  apt: name=docker-compose state=absent
+
+- name: Add docker-compose installer
+  become: yes
+  template: src=docker-compose-install.sh dest=/usr/local/bin/docker-compose-install.sh
+
+- name: Install recent version of docker-compose
+  become: yes
+  shell: bash /usr/local/bin/docker-compose-install.sh
+
+- name: Schedule a clean up for Docker images
+  become: yes
+  cron:
+      name: "docker-clean-up-images"
+      minute: "0"
+      hour: "22"
+      job: "docker rmi $(docker images | awk '/^<none>/ { print $3 }') 2> /dev/null"
+      day: "10"
+
+- name: Schedule a clean up for Docker unused containers
+  become: yes
+  cron:
+      name: "docker-clean-up-containers"
+      minute: "0"
+      hour: "22"
+      job: "docker ps --filter 'status=exited' | grep 'weeks ago' | awk '{print $1}' | xargs --no-run-if-empty docker rm 2> /dev/null"
+      day: "5"

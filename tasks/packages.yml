@@ -1,0 +1,23 @@
+- name: Install misc admin packages
+  become: yes
+  apt:
+      name:
+          - git
+          - htop
+          - iotop
+          - mytop
+          - iftop
+          - iptraf
+          - telnet
+          - zsh
+          - mc
+          - python-pip
+          - python-requests
+          - python-yaml
+          - python-jsonschema
+          - python-docopt
+          - python-texttable
+          - traceroute
+          - ctop
+      state: present
+      update_cache: yes
