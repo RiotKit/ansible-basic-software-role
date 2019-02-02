@@ -1,4 +1,4 @@
-- name: Install misc admin packages
+- name: Install misc admin packages (non-Debian)
   become: yes
   apt:
       name:
@@ -21,3 +21,28 @@
           - ctop
       state: present
       update_cache: yes
+  when: ansible_distribution != 'Debian'
+
+- name: Install misc admin packages (Debian)
+  become: yes
+  apt:
+      name:
+          - git
+          - htop
+          - iotop
+          - iftop
+          - iptraf
+          - telnet
+          - zsh
+          - mc
+          - python-pip
+          - python-requests
+          - python-yaml
+          - python-jsonschema
+          - python-docopt
+          - python-texttable
+          - traceroute
+          - ctop
+      state: present
+      update_cache: yes
+  when: ansible_distribution == 'Debian'

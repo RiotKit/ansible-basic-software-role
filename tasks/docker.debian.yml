@@ -1,0 +1,23 @@
+- name: Install apt dependencies
+  become: yes
+  apt:
+      name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - software-properties-common
+      state: present
+      update_cache: yes
+
+- name: Add APT key for docker repository
+  become: yes
+  shell: "curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -"
+
+- name: Add repository
+  become: yes
+  shell: 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"'
+
+- name: Install docker from the download.docker.com repository
+  become: yes
+  apt: name="docker-ce" state=present update_cache=yes

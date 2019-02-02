@@ -1,8 +1,10 @@
-- name: Install misc admin packages
+- name: Install docker from main repository
   become: yes
-  apt: name="{{ item }}" state=present update_cache=yes
-  with_items:
-      - docker.io
+  apt: name="docker.io" state=present update_cache=yes
+  when: ansible_distribution != 'Debian'
+
+- include: docker.debian.yml
+  when: ansible_distribution == 'Debian'
 
 - name: Remove docker-compose from package manager
   become: yes
