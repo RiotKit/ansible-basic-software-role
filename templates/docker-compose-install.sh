@@ -29,7 +29,7 @@ function install_other_arch() {
     return $?
 }
 
-if [[ $(uname -m) == "armv7l" ]]; then
+if [[ $(uname -m) == "armv7l" ]] || [[ $(uname -m) == "aarch64" ]]; then
     install_armv7
     exit $?
 fi
