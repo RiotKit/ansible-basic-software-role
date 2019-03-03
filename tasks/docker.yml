@@ -6,17 +6,17 @@
 - include: docker.debian.yml
   when: ansible_distribution == 'Debian'
 
-- name: Remove docker-compose from package manager
+- name: Delete old docker-compose from package manager
   become: yes
-  apt: name=docker-compose state=absent
+  apt:
+      name: docker-compose
+      state: absent
 
-- name: Add docker-compose installer
+- name: Install recent version of docker compose
   become: yes
-  template: src=docker-compose-install.sh dest=/usr/local/bin/docker-compose-install.sh
-
-- name: Install recent version of docker-compose
-  become: yes
-  shell: bash /usr/local/bin/docker-compose-install.sh
+  pip:
+      name: docker-compose
+      state: present
 
 - name: Schedule a clean up for Docker images
   become: yes
