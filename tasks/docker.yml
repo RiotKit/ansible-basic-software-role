@@ -12,6 +12,12 @@
       name: docker-compose
       state: absent
 
+- name: Install required Python packages
+  become: yes
+  apt:
+      name: ["{{ setuptools_pkg_name }}", "{{ python_pip_pkg_name }}"]
+      state: present
+
 - name: Install recent version of docker compose
   become: yes
   pip:
@@ -26,6 +32,7 @@
       hour: "22"
       job: "docker rmi $(docker images | awk '/^<none>/ { print $3 }') 2> /dev/null"
       day: "10"
+  when: docker_schedule_clean_up
 
 - name: Schedule a clean up for Docker unused containers
   become: yes
@@ -35,3 +42,4 @@
       hour: "22"
       job: "docker ps --filter 'status=exited' | grep 'weeks ago' | awk '{print $1}' | xargs --no-run-if-empty docker rm 2> /dev/null"
       day: "5"
+  when: docker_schedule_clean_up
