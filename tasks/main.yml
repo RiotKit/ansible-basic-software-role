@@ -1,5 +1,5 @@
 - include: docker.yml
-  when: docker
+  when: docker|bool
 
 - include: packages.yml
 - include: sudo.yml
