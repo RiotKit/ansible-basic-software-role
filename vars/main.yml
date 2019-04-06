@@ -2,12 +2,12 @@
 #
 # Python's setuptools package name
 #
-setuptools_pkg_name: "python-setuptools"
+setuptools_pkg_name: "python3-setuptools"
 
 #
 # Python's package manager package name
 #
-python_pip_pkg_name: "python-pip"
+python_pip_pkg_name: "python3-pip"
 
 #
 # Installs a fresh docker and docker-compose from get.docker.com
@@ -31,11 +31,8 @@ apt_packages:
     - telnet
     - zsh
     - mc
-    - python-pip
-    - python-requests
-    - python-yaml
-    - python-jsonschema
-    - python-docopt
-    - python-texttable
+    - python3-pip
+    - python3-requests
+    - python3-yaml
     - traceroute
     - ctop
