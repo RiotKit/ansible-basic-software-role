@@ -27,19 +27,9 @@
 - name: Schedule a clean up for Docker images
   become: yes
   cron:
-      name: "docker-clean-up-images"
+      name: "docker-clean-up"
       minute: "0"
       hour: "22"
-      job: "docker rmi $(docker images | awk '/^<none>/ { print $3 }') 2> /dev/null"
+      job: "docker container prune -f; docker image prune -f"
       day: "10"
-  when: docker_schedule_clean_up|bool
-
-- name: Schedule a clean up for Docker unused containers
-  become: yes
-  cron:
-      name: "docker-clean-up-containers"
-      minute: "0"
-      hour: "22"
-      job: "docker ps --filter 'status=exited' | grep 'weeks ago' | awk '{print $1}' | xargs --no-run-if-empty docker rm 2> /dev/null"
-      day: "5"
   when: docker_schedule_clean_up|bool
