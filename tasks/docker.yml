@@ -1,28 +1,51 @@
+#
+# Rules:
+#   1. If docker is already running, then it is not updated
+#   2. Docker update could be enforced with `enforce_docker_update`
+#   3. If update is ENFORCED, then docker daemon is RESTARTED
+#
+
+- name: Check if docker is not running
+  become: yes
+  command: "/bin/bash -c '(ps ax |grep dockerd | grep -v grep && echo \"0\") || echo \"1\"'"
+  register: docker_is_not_running
+
+- name: Turn off the docker if update is enforced
+  become: yes
+  systemd:
+      name: docker
+      state: stopped
+  when: docker_is_not_running.stdout|bool or enforce_docker_update|bool
+
 - name: Install docker from main repository
   become: yes
   apt: name="docker.io" state=present update_cache=yes
-  when: ansible_distribution != 'Debian'
+  when: ansible_distribution != 'Debian' and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
 
 - include: docker.debian.yml
-  when: ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Debian' and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
 
 - name: Delete old docker-compose from package manager
   become: yes
   apt:
       name: docker-compose
       state: absent
+  when: docker_is_not_running.stdout|bool or enforce_docker_update|bool
 
 - name: Install required Python packages
   become: yes
   apt:
       name: ["{{ setuptools_pkg_name }}", "{{ python_pip_pkg_name }}"]
       state: present
+  when: docker_is_not_running.stdout|bool or enforce_docker_update|bool
 
 - name: Install recent version of docker compose
   become: yes
   pip:
       name: docker-compose
       state: present
+      executable: "{{ pip_executable }}"
+  when: docker_is_not_running.stdout|bool or enforce_docker_update|bool
 
 - name: Schedule a clean up for Docker images
   become: yes

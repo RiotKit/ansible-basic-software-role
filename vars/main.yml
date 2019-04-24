@@ -20,6 +20,16 @@ docker: yes
 docker_schedule_clean_up: yes
 
 #
+# Enforce docker to be updated (WARNING: will turn off and turn on docker)
+#
+enforce_docker_update: no
+
+#
+# Python's PIP executable
+#
+pip_executable: "pip3"
+
+#
 # APT packages
 #
 apt_packages:
