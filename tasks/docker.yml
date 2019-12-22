@@ -21,10 +21,10 @@
 - name: Install docker from main repository
   become: yes
   apt: name="docker.io" state=present update_cache=yes
-  when: ansible_distribution != 'Debian' and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
+  when: ansible_distribution != 'Debian' and ansible_distribution != 'Ubuntu' and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
 
 - include: docker.debian.yml
-  when: ansible_distribution == 'Debian' and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
+  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (docker_is_not_running.stdout|bool or enforce_docker_update|bool)
 
 - name: Delete old docker-compose from package manager
   become: yes
